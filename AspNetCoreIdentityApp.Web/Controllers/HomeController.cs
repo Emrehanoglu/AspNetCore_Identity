@@ -9,13 +9,15 @@ namespace AspNetCoreIdentityApp.Web.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _logger = logger;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -71,8 +73,28 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignIn(SignUpViewModel request)
+        public async Task<IActionResult> SignIn(SignInViewModel request, string returnUrl = null)
         {
+            //returnUrl null ise kullanıcı Index sayfasına yönlendirilecek
+            returnUrl = returnUrl ?? Url.Action("Index","Home");
+
+            var hasUser = await _userManager.FindByEmailAsync(request.Email);
+
+            if(hasUser == null)
+            {
+                ModelState.AddModelError(string.Empty, "Email veya Şifre yanlış");
+                return View();
+            }
+
+            var identityResult = await _signInManager.PasswordSignInAsync(hasUser!, request.Password, request.RememberMe, false);
+
+            if (identityResult.Succeeded)
+            {
+                return Redirect(returnUrl);
+            }
+
+            ModelState.AddModelError(string.Empty, "Email veya Şifre yanlış");
+
             return View();
         }
 
