@@ -18,7 +18,9 @@ namespace AspNetCoreIdentityApp.Web.Extensions
                 options.Password.RequireUppercase = false; //büyük karakter zorunlu olmasın
                 options.Password.RequireDigit = false; //sayısal karakter zorunlu olmasın
 
-            }).AddPasswordValidator<PasswordValidator>().AddEntityFrameworkStores<AppDbContext>();
+            }).AddPasswordValidator<PasswordValidator>().
+            AddUserValidator<UserValidator>().
+            AddEntityFrameworkStores<AppDbContext>();
         }
     }
 }

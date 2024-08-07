@@ -20,7 +20,7 @@ namespace AspNetCoreIdentityApp.Web.CustomValidations
             {
                 errors.Add(new()
                 {
-                    Code="PasswordNoContain1234",
+                    Code="PasswordContain1234",
                     Description="Şifre alanı ardışık sayı içeremez"
                 });
             }
