@@ -86,14 +86,22 @@ namespace AspNetCoreIdentityApp.Web.Controllers
                 return View();
             }
 
-            var identityResult = await _signInManager.PasswordSignInAsync(hasUser!, request.Password, request.RememberMe, false);
+            var identityResult = await _signInManager.PasswordSignInAsync(hasUser!, request.Password, request.RememberMe, true);
 
             if (identityResult.Succeeded)
             {
                 return Redirect(returnUrl);
             }
 
+            if (identityResult.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty,"3 dakika boyunca giriş yapamazsınız");
+                return View();
+            }
+
             ModelState.AddModelError(string.Empty, "Email veya Şifre yanlış");
+
+            ModelState.AddModelError(string.Empty, $"Basarısız giriş sayısı : {await _userManager.GetAccessFailedCountAsync(hasUser)}");
 
             return View();
         }
