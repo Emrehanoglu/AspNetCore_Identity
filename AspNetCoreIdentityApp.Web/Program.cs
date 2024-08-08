@@ -14,6 +14,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddIdentityWithExt();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    var cookieBuilder = new CookieBuilder();
+    cookieBuilder.Name = "IdentityAppCookie";
+    options.LoginPath = new PathString("/Home/SignIn");
+    options.Cookie = cookieBuilder;
+    options.ExpireTimeSpan = TimeSpan.FromDays(60);
+
+    //kullanýcý 60 gün boyuunca 1 kere bile giriþ yapsa bilgiler tutulur
+    //giriþ yaptýgý gün Cookie süresi tekrar 60 gün olarak setlenir.
+    options.SlidingExpiration = true;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
