@@ -30,6 +30,17 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             return View();
         }
 
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        public IActionResult ForgetPassword()
+        {
+            TempData["SuccessMessage"] = "Şifre yenileme linki, e-posta adresinize gönderilecektir.";
+            return View();
+        }
+
         [HttpGet]
         public IActionResult SignUp()
         {
