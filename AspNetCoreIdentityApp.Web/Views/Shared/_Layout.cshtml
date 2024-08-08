@@ -27,9 +27,10 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+
+                    @await Html.PartialAsync("_NavbarLogin")
+
                 </div>
-                <a class="btn btn-outline-success btn-sm mx-1" asp-controller="Home" asp-action="SignIn">Üye Giriş</a>
-                <a class="btn btn-outline-success btn-sm" style="margin-left=2" asp-controller="Home" asp-action="SignUp">Üye Kayıt</a>
             </div>
         </nav>
     </header>
