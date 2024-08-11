@@ -3,6 +3,7 @@ using AspNetCoreIdentityApp.Web.Services;
 using AspNetCoreIdentityApp.Web.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Common;
 using System.Diagnostics;
 
 namespace AspNetCoreIdentityApp.Web.Controllers
@@ -32,8 +33,42 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             return View();
         }
 
-        public IActionResult ResetPassword()
+        public IActionResult ResetPassword(string userId, string token)
         {
+            TempData["userId"] = userId;
+            TempData["token"] = token;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var userId = TempData["userId"];
+            var token = TempData["token"];
+
+            if(userId == null || token == null)
+            {
+                throw new Exception("Bir hata meydana geldi.");
+            }
+
+            var hasUser = await _userManager.FindByIdAsync(userId.ToString()!);
+
+            if(hasUser == null)
+            {
+                ModelState.AddModelError(string.Empty, "Böyle bir kullanıcı bulunamamaktadır.");
+                return View();
+            }
+
+            var result = await _userManager.ResetPasswordAsync(hasUser, token.ToString()!, model.Password);
+
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Şifreniz başarıyla yenilenmiştir.";
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty,"Bir hata meydana geldi.");
+            }
             return View();
         }
 
