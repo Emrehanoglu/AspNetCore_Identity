@@ -164,7 +164,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             if (identityResult.Succeeded)
             {
-                return Redirect(returnUrl);
+                return Redirect(returnUrl!);
             }
 
             if (identityResult.IsLockedOut)
@@ -175,7 +175,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             ModelState.AddModelError(string.Empty, "Email veya Şifre yanlış");
 
-            ModelState.AddModelError(string.Empty, $"Basarısız giriş sayısı : {await _userManager.GetAccessFailedCountAsync(hasUser)}");
+            ModelState.AddModelError(string.Empty, $"Başarısız giriş sayısı : {await _userManager.GetAccessFailedCountAsync(hasUser)}");
 
             return View();
         }
