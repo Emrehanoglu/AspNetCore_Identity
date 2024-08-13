@@ -115,6 +115,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ModelState.AddModelError(string.Empty, "Eksik bilgiler mevcut");
                 return View();
             }
 
@@ -149,6 +150,12 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInViewModel request, string returnUrl = null)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Email veya Şifre yanlış");
+                return View();
+            }
+
             //returnUrl null ise kullanıcı Index sayfasına yönlendirilecek
             returnUrl = returnUrl ?? Url.Action("Index","Home");
 

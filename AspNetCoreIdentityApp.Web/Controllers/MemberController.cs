@@ -33,8 +33,50 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             return View(userViewModel);
         }
 
+        [HttpGet]
         public IActionResult PasswordChange()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PasswordChange(PasswordChangeViewModel request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var currentUser = await _userManager.FindByNameAsync(User.Identity!.Name!);
+
+            var checkOldPassword = await _userManager.CheckPasswordAsync(currentUser!, request.PasswordOld);
+
+            if (!checkOldPassword)
+            {
+                ModelState.AddModelError(string.Empty, "Eski şifreniz yanlış");
+                return View();
+            }
+
+            var resultChangePassword = await _userManager.ChangePasswordAsync(currentUser!,request.PasswordOld, request.PasswordNew);
+
+            if (!resultChangePassword.Succeeded)
+            {
+                foreach (IdentityError item in resultChangePassword.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, item.Description);
+                }
+                return View();
+            }
+
+            //Kullanıcı şifresini değiştirdi, securityStamp bilgisini güncellemeliyim
+            await _userManager.UpdateSecurityStampAsync(currentUser!);
+
+            //Kullanıcı şifresini değiştirdi, tekrar login ile cookie bilgilerini güncellemeliyim
+            await _signInManager.SignOutAsync();
+            await _signInManager.PasswordSignInAsync(currentUser!,request.PasswordNew,true,false);
+              
+            TempData["SuccessMessage"] = "Şifreniz başarıyla değiştirilmiştir.";
+
             return View();
         }
 
