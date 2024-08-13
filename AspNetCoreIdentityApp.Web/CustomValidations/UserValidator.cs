@@ -12,7 +12,7 @@ namespace AspNetCoreIdentityApp.Web.CustomValidations
             //2. parametre kısmında bir parametre belirtseydim user.UserName 'i
             //integer 'a cevirebilseydi, o parametreye o degeri atayacaktı
             //ama belirtmediğim için burada bana sadece true false dönecek
-            var isNumeric = int.TryParse(user.UserName[0].ToString(), out _);
+            var isNumeric = int.TryParse(user.UserName![0].ToString(), out _);
 
             if (isNumeric)
             {
