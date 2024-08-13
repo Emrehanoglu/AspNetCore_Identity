@@ -20,8 +20,10 @@ namespace AspNetCoreIdentityApp.Web.ViewModels
         [Display(Name = "Email: ")]
         public string Email { get; set; }
 
+        [DataType(DataType.Password)]
         [Required(ErrorMessage = "Şifre alanı boş geçilemez")]
         [Display(Name = "Şifre: ")]
+        [MinLength(6, ErrorMessage = "Şifreniz en az 6 karakter olmalıdır.")]
         public string Password { get; set; }
 
         public bool RememberMe { get; set; }
