@@ -4,9 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
+@section Css{
+    @await Html.PartialAsync("_ValidationCssPartial.cshtml")
+}
+
 <div class="row">
     <div class="col-md-6 offset-md-3 text-center">
-        <user-picture-thumbnail class="rounded" style="width:300px" picture-url="@Model.PictureUrl"></user-picture-thumbnail>
+        <user-picture-thumbnail class="aa" style="width:300px" picture-url="@Model.PictureUrl"></user-picture-thumbnail>
     </div>
 </div>
 
