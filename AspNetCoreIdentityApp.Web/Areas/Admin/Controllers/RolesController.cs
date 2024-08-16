@@ -2,6 +2,7 @@
 using AspNetCoreIdentityApp.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers;
 
@@ -19,9 +20,15 @@ public class RolesController : Controller
     }
 
     [Route("Index")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var roles = await _roleManager.Roles.Select(x => new RoleViewModel
+        {
+            Id = x.Id,
+            Name = x.Name!
+        }).ToListAsync();
+
+        return View(roles);
     }
 
     [HttpGet]
