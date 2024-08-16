@@ -17,6 +17,7 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
             _userManager = userManager;
         }
 
+        [Route("Index")]
         public IActionResult Index()
         {
             return View();
@@ -30,8 +31,8 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
             var userViewModelList = userList.Select(x => new UserViewModel
             {
                 Id = x.Id,
-                Name = x.UserName,
-                Email = x.Email
+                Name = x.UserName!,
+                Email = x.Email!
             });
 
             return View(userViewModelList.ToList());
