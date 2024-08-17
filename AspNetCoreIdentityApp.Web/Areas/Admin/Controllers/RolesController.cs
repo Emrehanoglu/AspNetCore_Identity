@@ -93,4 +93,55 @@ public class RolesController : Controller
 
         return RedirectToAction("Index", "Roles", new { area = "Admin" });
     }
+
+    [Route("RoleDelete/{id}")]
+    public async Task<IActionResult> RoleDelete(string id)
+    {
+        var roleToDelete = await _roleManager.FindByIdAsync(id);
+
+        if (roleToDelete == null)
+        {
+            throw new Exception("Güncellenecek rol bulunamamıştır.");
+        }
+
+        var result = await _roleManager.DeleteAsync(roleToDelete);
+
+        if (!result.Succeeded)
+        {
+            throw new Exception(result.Errors.Select(x => x.Description).First());
+        }
+
+        TempData["SuccessMessage"] = "Rol bilgisi silinmiştir.";
+
+        return RedirectToAction("Index", "Roles", new { area = "Admin" });
+    }
+
+    public async Task<IActionResult> AssignRoleToUser(string id)
+    {
+        var currentUser = (await _userManager.FindByIdAsync(id))!;
+
+        var roles = await _roleManager.Roles.ToListAsync();
+
+        var roleViewModelList = new List<AssignRoleToUserViewModel>();
+
+        var userRoles = await _userManager.GetRolesAsync(currentUser!);
+
+        foreach (var role in roles)
+        {
+            var assignRoleToUserViewModel = new AssignRoleToUserViewModel
+            {
+                Id = role.Id,
+                Name = role.Name!
+            };
+
+            if (userRoles.Contains(role.Name))
+            {
+                assignRoleToUserViewModel.Exist = true;
+            }
+
+            roleViewModelList.Add(assignRoleToUserViewModel);
+        }
+
+        return View(roleViewModelList);
+    }
 }
