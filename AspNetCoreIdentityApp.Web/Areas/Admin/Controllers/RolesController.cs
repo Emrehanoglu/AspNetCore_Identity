@@ -42,7 +42,7 @@ public class RolesController : Controller
     [Route("RoleCreate")]
     public async Task<IActionResult> RoleCreate(RoleCreateViewModel request)
     {
-        var result = await _roleManager.CreateAsync(new AppRole { Name = request.Name});
+        var result = await _roleManager.CreateAsync(new AppRole { Name = request.Name });
 
         if (!result.Succeeded)
         {
@@ -53,7 +53,7 @@ public class RolesController : Controller
             }
         }
 
-        return RedirectToAction("Index","Roles", new {area="Admin"});
+        return RedirectToAction("Index", "Roles", new { area = "Admin" });
     }
 
     [HttpGet]
@@ -62,14 +62,14 @@ public class RolesController : Controller
     {
         var roleToUpdate = await _roleManager.FindByIdAsync(id);
 
-        if(roleToUpdate == null)
+        if (roleToUpdate == null)
         {
             throw new Exception("Güncellenecek rol bulunamamıştır.");
         }
 
         return View(new RoleUpdateViewModel
         {
-            Id =roleToUpdate!.Id!,
+            Id = roleToUpdate!.Id!,
             Name = roleToUpdate!.Name!
         });
     }
@@ -116,8 +116,13 @@ public class RolesController : Controller
         return RedirectToAction("Index", "Roles", new { area = "Admin" });
     }
 
+    [HttpGet]
+    [Route("AssignRoleToUser/{id}")]
     public async Task<IActionResult> AssignRoleToUser(string id)
     {
+        //kullanıcı id bilgisini ViewBag ile Post bloguna tasıyorum
+        ViewBag.userId = id;
+
         var currentUser = (await _userManager.FindByIdAsync(id))!;
 
         var roles = await _roleManager.Roles.ToListAsync();
@@ -143,5 +148,29 @@ public class RolesController : Controller
         }
 
         return View(roleViewModelList);
+    }
+
+    [HttpPost]
+    [Route("AssignRoleToUser/{id}")]
+    public async Task<IActionResult> AssignRoleToUser(string userId, List<AssignRoleToUserViewModel> requestList)
+    {
+        var currentUser = (await _userManager.FindByIdAsync(userId))!;
+
+        foreach(AssignRoleToUserViewModel role in requestList)
+        {
+            //checkBox işaretlenmişse kullanıcıya rol atandı
+            if (role.Exist)
+            {
+                await _userManager.AddToRoleAsync(currentUser,role.Name);
+            }
+
+            //checkBox işaretlenmemişse kullanıcıdan rol silindi
+            if (!role.Exist)
+            {
+                await _userManager.RemoveFromRoleAsync(currentUser, role.Name);
+            }
+        }
+
+        return RedirectToAction("UserList","Home",new { area="Admin"});
     }
 }
