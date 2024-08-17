@@ -1,5 +1,6 @@
 ﻿using AspNetCoreIdentityApp.Web.Areas.Admin.Models;
 using AspNetCoreIdentityApp.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class RolesController : Controller
         _roleManager = roleManager;
     }
 
+    [Authorize(Roles = "admin,role-action")]
     [Route("Index")]
     public async Task<IActionResult> Index()
     {
@@ -31,6 +33,7 @@ public class RolesController : Controller
         return View(roles);
     }
 
+    [Authorize(Roles = "admin,role-action")]
     [HttpGet]
     [Route("RoleCreate")]
     public IActionResult RoleCreate()
@@ -38,6 +41,7 @@ public class RolesController : Controller
         return View();
     }
 
+    [Authorize(Roles = "admin,role-action")]
     [HttpPost]
     [Route("RoleCreate")]
     public async Task<IActionResult> RoleCreate(RoleCreateViewModel request)
@@ -56,6 +60,7 @@ public class RolesController : Controller
         return RedirectToAction("Index", "Roles", new { area = "Admin" });
     }
 
+    [Authorize(Roles = "admin,role-action")]
     [HttpGet]
     [Route("RoleUpdate/{id}")]
     public async Task<IActionResult> RoleUpdate(string id)
@@ -74,6 +79,7 @@ public class RolesController : Controller
         });
     }
 
+    [Authorize(Roles = "admin,role-action")]
     [HttpPost]
     [Route("RoleUpdate/{id}")]
     public async Task<IActionResult> RoleUpdate(RoleUpdateViewModel request)
@@ -94,6 +100,7 @@ public class RolesController : Controller
         return RedirectToAction("Index", "Roles", new { area = "Admin" });
     }
 
+    [Authorize(Roles = "admin,role-action")]
     [Route("RoleDelete/{id}")]
     public async Task<IActionResult> RoleDelete(string id)
     {

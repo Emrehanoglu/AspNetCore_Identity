@@ -170,5 +170,12 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             return View(userEditViewModel);
         }
+    
+        public IActionResult AccessDenied(string ReturnUrl)
+        {
+            ViewBag.message = "Bu sayfada işlem yapabilmek için yetkiniz yoktur";
+
+            return View();
+        }
     }
 }
