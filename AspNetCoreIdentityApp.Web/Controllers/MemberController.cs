@@ -177,5 +177,17 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Claims()
+        {
+            var userClaimList = User.Claims.Select(x => new ClaimViewModel
+            {
+                Issuer = x.Issuer,
+                Type = x.Type,
+                Value = x.Value
+            }).ToList();
+            return View(userClaimList);
+        }
     }
 }

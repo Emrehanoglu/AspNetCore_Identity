@@ -21,7 +21,6 @@ public class RolesController : Controller
         _roleManager = roleManager;
     }
 
-    [Authorize(Roles = "admin,role-action")]
     [Route("Index")]
     public async Task<IActionResult> Index()
     {
