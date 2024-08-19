@@ -24,6 +24,14 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 
 builder.Services.AddIdentityWithExt();
 
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("AntalyaPolicy", policy =>
+    {
+        policy.RequireClaim("city", "Antalya");
+    });
+});
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     var cookieBuilder = new CookieBuilder();
