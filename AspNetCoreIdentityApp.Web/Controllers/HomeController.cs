@@ -47,14 +47,14 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             var userId = TempData["userId"];
             var token = TempData["token"];
 
-            if(userId == null || token == null)
+            if (userId == null || token == null)
             {
                 throw new Exception("Bir hata meydana geldi.");
             }
 
             var hasUser = await _userManager.FindByIdAsync(userId.ToString()!);
 
-            if(hasUser == null)
+            if (hasUser == null)
             {
                 ModelState.AddModelError(string.Empty, "Böyle bir kullanıcı bulunamamaktadır.");
                 return View();
@@ -68,7 +68,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty,"Bir hata meydana geldi.");
+                ModelState.AddModelError(string.Empty, "Bir hata meydana geldi.");
             }
             return View();
         }
@@ -85,16 +85,16 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         {
             var hasUser = await _userManager.FindByEmailAsync(request.Email);
 
-            if(hasUser == null)
+            if (hasUser == null)
             {
-                ModelState.AddModelError(string.Empty,"Bu email adresine sahip bir kullanıcı yoktur.");
+                ModelState.AddModelError(string.Empty, "Bu email adresine sahip bir kullanıcı yoktur.");
                 return View();
             }
 
             string passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(hasUser);
 
-            var passwordResetLink = Url.Action("ResetPassword","Home", 
-                new { userId=hasUser.Id, Token = passwordResetToken},
+            var passwordResetLink = Url.Action("ResetPassword", "Home",
+                new { userId = hasUser.Id, Token = passwordResetToken },
                 HttpContext.Request.Scheme);
 
             //Email Send Service
@@ -120,7 +120,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
                 return View();
             }
 
-            var identityResult =  await _userManager.CreateAsync(new AppUser
+            var identityResult = await _userManager.CreateAsync(new AppUser
             {
                 UserName = request.UserName,
                 Email = request.Email,
@@ -173,11 +173,11 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             }
 
             //returnUrl null ise kullanıcı Index sayfasına yönlendirilecek
-            returnUrl = returnUrl ?? Url.Action("Index","Home");
+            returnUrl = returnUrl ?? Url.Action("Index", "Home");
 
             var hasUser = await _userManager.FindByEmailAsync(request.Email);
 
-            if(hasUser == null)
+            if (hasUser == null)
             {
                 ModelState.AddModelError(string.Empty, "Email veya Şifre yanlış");
                 return View();
@@ -185,22 +185,29 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             var identityResult = await _signInManager.PasswordSignInAsync(hasUser!, request.Password, request.RememberMe, true);
 
-            if (identityResult.Succeeded)
-            {
-                return Redirect(returnUrl!);
-            }
 
             if (identityResult.IsLockedOut)
             {
-                ModelState.AddModelError(string.Empty,"3 dakika boyunca giriş yapamazsınız");
+                ModelState.AddModelError(string.Empty, "3 dakika boyunca giriş yapamazsınız");
                 return View();
             }
 
-            ModelState.AddModelError(string.Empty, "Email veya Şifre yanlış");
+            if (!identityResult.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Email veya Şifre yanlış");
+                ModelState.AddModelError(string.Empty, $"Başarısız giriş sayısı : {await _userManager.GetAccessFailedCountAsync(hasUser)}");
+                return View();
+            }
 
-            ModelState.AddModelError(string.Empty, $"Başarısız giriş sayısı : {await _userManager.GetAccessFailedCountAsync(hasUser)}");
+            if (hasUser.BirthDate.HasValue)
+            {
+                await _signInManager.SignInWithClaimsAsync(hasUser, request.RememberMe, new[]
+                {
+                    new Claim("birthdate",hasUser.BirthDate.Value.ToString())
+                });
+            }
 
-            return View();
+            return Redirect(returnUrl!);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

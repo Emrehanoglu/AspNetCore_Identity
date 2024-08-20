@@ -36,6 +36,10 @@ builder.Services.AddAuthorization(opt =>
     {
         policy.AddRequirements(new ExchangeExpireRequirement());
     });
+    opt.AddPolicy("ViolencePolicy", policy =>
+    {
+        policy.AddRequirements(new ViolenceRequirement() { ThresholdAge = 18});
+    });
 });
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -57,6 +61,8 @@ builder.Services.AddScoped<IEmailService,EmailService>();
 builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
 
 builder.Services.AddScoped<IAuthorizationHandler, ExchangeExpireRequirementHandler>();
+
+builder.Services.AddScoped<IAuthorizationHandler, ViolenceRequirementHandler>();
 
 var app = builder.Build();
 

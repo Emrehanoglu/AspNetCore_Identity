@@ -62,7 +62,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
                 return View();
             }
 
-            var resultChangePassword = await _userManager.ChangePasswordAsync(currentUser!,request.PasswordOld, request.PasswordNew);
+            var resultChangePassword = await _userManager.ChangePasswordAsync(currentUser!, request.PasswordOld, request.PasswordNew);
 
             if (!resultChangePassword.Succeeded)
             {
@@ -78,8 +78,8 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             //Kullanıcı şifresini değiştirdi, tekrar login ile cookie bilgilerini güncellemeliyim
             await _signInManager.SignOutAsync();
-            await _signInManager.PasswordSignInAsync(currentUser!,request.PasswordNew,true,false);
-              
+            await _signInManager.PasswordSignInAsync(currentUser!, request.PasswordNew, true, false);
+
             TempData["SuccessMessage"] = "Şifreniz başarıyla değiştirilmiştir.";
 
             return View();
@@ -88,7 +88,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("SignIn","Home");
+            return RedirectToAction("SignIn", "Home");
         }
 
         [HttpGet]
@@ -127,14 +127,14 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             currentUser.City = request.City;
             currentUser.Gender = request.Gender;
 
-            if (request.Picture!=null && request.Picture.Length > 0)
+            if (request.Picture != null && request.Picture.Length > 0)
             {
                 var wwwrootFolder = _fileProvider.GetDirectoryContents("wwwroot");
 
                 //{Path.GetExtension(request.Picture.FileName)} --> .jpg / .png
                 var randomFileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(request.Picture.FileName)}";
 
-                var newPicturePath = Path.Combine(wwwrootFolder.First(x=>x.Name =="userpictures").PhysicalPath!,randomFileName);
+                var newPicturePath = Path.Combine(wwwrootFolder.First(x => x.Name == "userpictures").PhysicalPath!, randomFileName);
 
                 using var stream = new FileStream(newPicturePath, FileMode.Create);
                 await request.Picture.CopyToAsync(stream);
@@ -146,7 +146,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             if (!updateToUserResult.Succeeded)
             {
-                foreach(IdentityError error in updateToUserResult.Errors)
+                foreach (IdentityError error in updateToUserResult.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
@@ -154,7 +154,18 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             await _userManager.UpdateSecurityStampAsync(currentUser);
             await _signInManager.SignOutAsync();
-            await _signInManager.SignInAsync(currentUser, true);
+
+            if (currentUser.BirthDate.HasValue)
+            {
+                await _signInManager.SignInWithClaimsAsync(currentUser, true, new[]
+                {
+                new Claim("birthdate", currentUser.BirthDate!.Value.ToString())
+                });
+            }
+            else
+            {
+                await _signInManager.SignInAsync(currentUser, true);
+            }
 
             TempData["SuccessMessage"] = "Üye bilgileri başarıyla değiştirilmiştir";
 
@@ -170,7 +181,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             return View(userEditViewModel);
         }
-    
+
         public IActionResult AccessDenied(string ReturnUrl)
         {
             ViewBag.message = "Bu sayfada işlem yapabilmek için yetkiniz yoktur";
@@ -196,9 +207,17 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         {
             return View();
         }
+
         [Authorize(Policy = "ExchangePolicy")]
         [HttpGet]
         public IActionResult ExchangePage()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "ViolencePolicy")]
+        [HttpGet]
+        public IActionResult ViolencePage()
         {
             return View();
         }
