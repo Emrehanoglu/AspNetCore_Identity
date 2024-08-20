@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Common;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace AspNetCoreIdentityApp.Web.Controllers
 {
@@ -127,18 +128,33 @@ namespace AspNetCoreIdentityApp.Web.Controllers
                 City = "İstanbul"
             }, request.Password);
 
-            if (identityResult.Succeeded)
+            if (!identityResult.Succeeded)
             {
-                TempData["SuccessMessage"] = "Üyelik kayıt işlemi başarıla gerçekleşmiştir.";
-                return RedirectToAction("SignUp", "Home");
+                foreach (IdentityError item in identityResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, item.Description);
+                }
+
+                return View();
             }
 
-            foreach(IdentityError item in identityResult.Errors)
+            var exchangeExpireClaim = new Claim("ExchangeExpireDate", DateTime.Now.AddDays(10).ToString());
+            var user = await _userManager.FindByNameAsync(request.UserName);
+            var claimResult = await _userManager.AddClaimAsync(user!, exchangeExpireClaim);
+
+            if (!claimResult.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, item.Description);
+                foreach (IdentityError item in claimResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, item.Description);
+                }
+
+                return View();
             }
 
-            return View();
+            TempData["SuccessMessage"] = "Üyelik kayıt işlemi başarıla gerçekleşmiştir.";
+
+            return RedirectToAction("SignUp", "Home");
         }
 
         [HttpGet]
