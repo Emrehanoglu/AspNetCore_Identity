@@ -2,8 +2,10 @@ using AspNetCoreIdentityApp.Web.ClaimProviders;
 using AspNetCoreIdentityApp.Web.Extensions;
 using AspNetCoreIdentityApp.Web.Models;
 using AspNetCoreIdentityApp.Web.OptionsModels;
+using AspNetCoreIdentityApp.Web.Requirements;
 using AspNetCoreIdentityApp.Web.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -30,6 +32,10 @@ builder.Services.AddAuthorization(opt =>
     {
         policy.RequireClaim("city", "Antalya");
     });
+    opt.AddPolicy("ExchangePolicy", policy =>
+    {
+        policy.AddRequirements(new ExchangeExpireRequirement());
+    });
 });
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -49,6 +55,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<IEmailService,EmailService>();
 
 builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
+
+builder.Services.AddScoped<IAuthorizationHandler, ExchangeExpireRequirementHandler>();
 
 var app = builder.Build();
 
