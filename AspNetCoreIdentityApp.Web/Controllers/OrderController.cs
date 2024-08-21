@@ -5,7 +5,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 {
     public class OrderController : Controller
     {
-        [Authorize(Policy = "OrderPermissionReadAndDelete")]
+        [Authorize(Policy = "Permission.Order.Read")]
         public IActionResult Index()
         {
             return View();
