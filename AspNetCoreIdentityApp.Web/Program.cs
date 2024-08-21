@@ -2,6 +2,7 @@ using AspNetCoreIdentityApp.Web.ClaimProviders;
 using AspNetCoreIdentityApp.Web.Extensions;
 using AspNetCoreIdentityApp.Web.Models;
 using AspNetCoreIdentityApp.Web.OptionsModels;
+using AspNetCoreIdentityApp.Web.Permissions;
 using AspNetCoreIdentityApp.Web.Requirements;
 using AspNetCoreIdentityApp.Web.Seeds;
 using AspNetCoreIdentityApp.Web.Services;
@@ -33,13 +34,22 @@ builder.Services.AddAuthorization(opt =>
     {
         policy.RequireClaim("city", "Antalya");
     });
+    
     opt.AddPolicy("ExchangePolicy", policy =>
     {
         policy.AddRequirements(new ExchangeExpireRequirement());
     });
+    
     opt.AddPolicy("ViolencePolicy", policy =>
     {
         policy.AddRequirements(new ViolenceRequirement() { ThresholdAge = 18 });
+    });
+    
+    opt.AddPolicy("OrderPermissionReadAndDelete", policy =>
+    {
+        policy.RequireClaim("Permission", Permission.Order.Read);
+        policy.RequireClaim("Permission", Permission.Order.Delete);
+        policy.RequireClaim("Permission", Permission.Stock.Delete);
     });
 });
 
