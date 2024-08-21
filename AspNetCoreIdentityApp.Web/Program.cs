@@ -3,6 +3,7 @@ using AspNetCoreIdentityApp.Web.Extensions;
 using AspNetCoreIdentityApp.Web.Models;
 using AspNetCoreIdentityApp.Web.OptionsModels;
 using AspNetCoreIdentityApp.Web.Requirements;
+using AspNetCoreIdentityApp.Web.Seeds;
 using AspNetCoreIdentityApp.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +39,7 @@ builder.Services.AddAuthorization(opt =>
     });
     opt.AddPolicy("ViolencePolicy", policy =>
     {
-        policy.AddRequirements(new ViolenceRequirement() { ThresholdAge = 18});
+        policy.AddRequirements(new ViolenceRequirement() { ThresholdAge = 18 });
     });
 });
 
@@ -56,7 +57,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-builder.Services.AddScoped<IEmailService,EmailService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
 
@@ -65,6 +66,13 @@ builder.Services.AddScoped<IAuthorizationHandler, ExchangeExpireRequirementHandl
 builder.Services.AddScoped<IAuthorizationHandler, ViolenceRequirementHandler>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+
+    await PermissionSeed.Seed(roleManager);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

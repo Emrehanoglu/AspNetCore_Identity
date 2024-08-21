@@ -33,7 +33,7 @@ public class RolesController : Controller
         return View(roles);
     }
 
-    [Authorize(Roles = "admin,role-action")]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     [Route("RoleCreate")]
     public IActionResult RoleCreate()
@@ -41,7 +41,7 @@ public class RolesController : Controller
         return View();
     }
 
-    [Authorize(Roles = "admin,role-action")]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [Route("RoleCreate")]
     public async Task<IActionResult> RoleCreate(RoleCreateViewModel request)
@@ -60,7 +60,7 @@ public class RolesController : Controller
         return RedirectToAction("Index", "Roles", new { area = "Admin" });
     }
 
-    [Authorize(Roles = "admin,role-action")]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     [Route("RoleUpdate/{id}")]
     public async Task<IActionResult> RoleUpdate(string id)
@@ -79,7 +79,7 @@ public class RolesController : Controller
         });
     }
 
-    [Authorize(Roles = "admin,role-action")]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [Route("RoleUpdate/{id}")]
     public async Task<IActionResult> RoleUpdate(RoleUpdateViewModel request)
@@ -100,7 +100,7 @@ public class RolesController : Controller
         return RedirectToAction("Index", "Roles", new { area = "Admin" });
     }
 
-    [Authorize(Roles = "admin,role-action")]
+    [Authorize(Roles = "Admin")]
     [Route("RoleDelete/{id}")]
     public async Task<IActionResult> RoleDelete(string id)
     {
