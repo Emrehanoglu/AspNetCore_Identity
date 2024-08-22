@@ -1,4 +1,4 @@
-﻿using AspNetCoreIdentityApp.Web.Models;
+﻿using AspNetCoreIdentityApp.Repository.Models;
 using AspNetCoreIdentityApp.Web.Services;
 using AspNetCoreIdentityApp.Core.ViewModels;
 using Microsoft.AspNetCore.Identity;

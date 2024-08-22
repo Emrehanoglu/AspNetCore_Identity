@@ -1,10 +1,10 @@
 using AspNetCoreIdentityApp.Web.ClaimProviders;
 using AspNetCoreIdentityApp.Web.Extensions;
-using AspNetCoreIdentityApp.Web.Models;
+using AspNetCoreIdentityApp.Repository.Models;
 using AspNetCoreIdentityApp.Core.OptionsModels;
 using AspNetCoreIdentityApp.Core.Permissions;
 using AspNetCoreIdentityApp.Web.Requirements;
-using AspNetCoreIdentityApp.Web.Seeds;
+using AspNetCoreIdentityApp.Repository.Seeds;
 using AspNetCoreIdentityApp.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +19,11 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        opt =>
+        {
+            opt.MigrationsAssembly("AspNetCoreIdentityApp.Repository");
+        });
 });
 
 builder.Services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
