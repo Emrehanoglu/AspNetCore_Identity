@@ -1,4 +1,5 @@
-﻿using AspNetCoreIdentityApp.Web.Models;
+﻿using AspNetCoreIdentityApp.Core.Models;
+using AspNetCoreIdentityApp.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
@@ -55,48 +56,48 @@ namespace AspNetCoreIdentityApp.Web.Seeds
         {
             //AspNetRoleClaims tablosuna BasicRole ile ilişkili kayıtlar atıldı.
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Stock.Read));
+                new Claim("Permission", Core.Permissions.Permission.Stock.Read));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Order.Read));
+                new Claim("Permission", Core.Permissions.Permission.Order.Read));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Catalog.Read));
+                new Claim("Permission", Core.Permissions.Permission.Catalog.Read));
         }
 
         public static async Task AddUpdateAndCreatePermission(AppRole appRole, RoleManager<AppRole> roleManager)
         {
             //AspNetRoleClaims tablosuna BasicRole ile ilişkili kayıtlar atıldı.
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Stock.Create));
+                new Claim("Permission", Core.Permissions.Permission.Stock.Create));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Order.Create));
+                new Claim("Permission", Core.Permissions.Permission.Order.Create));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Catalog.Create));
+                new Claim("Permission", Core.Permissions.Permission.Catalog.Create));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Stock.Update));
+                new Claim("Permission", Core.Permissions.Permission.Stock.Update));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Order.Update));
+                new Claim("Permission", Core.Permissions.Permission.Order.Update));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Catalog.Update));
+                new Claim("Permission", Core.Permissions.Permission.Catalog.Update));
         }
 
         public static async Task AddDeletePermission(AppRole appRole, RoleManager<AppRole> roleManager)
         {
             //AspNetRoleClaims tablosuna BasicRole ile ilişkili kayıtlar atıldı.
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Stock.Delete));
+                new Claim("Permission", Core.Permissions.Permission.Stock.Delete));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Order.Delete));
+                new Claim("Permission", Core.Permissions.Permission.Order.Delete));
 
             await roleManager.AddClaimAsync(appRole,
-                new Claim("Permission", Permissions.Permission.Catalog.Delete));
+                new Claim("Permission", Core.Permissions.Permission.Catalog.Delete));
         }
     }
 }

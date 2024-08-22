@@ -1,8 +1,8 @@
 using AspNetCoreIdentityApp.Web.ClaimProviders;
 using AspNetCoreIdentityApp.Web.Extensions;
 using AspNetCoreIdentityApp.Web.Models;
-using AspNetCoreIdentityApp.Web.OptionsModels;
-using AspNetCoreIdentityApp.Web.Permissions;
+using AspNetCoreIdentityApp.Core.OptionsModels;
+using AspNetCoreIdentityApp.Core.Permissions;
 using AspNetCoreIdentityApp.Web.Requirements;
 using AspNetCoreIdentityApp.Web.Seeds;
 using AspNetCoreIdentityApp.Web.Services;
